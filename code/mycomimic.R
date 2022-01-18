@@ -14,7 +14,6 @@
 library(tidyverse)
 library(magrittr)
 library(here)
-library(cowplot)
 
 # Load functions ####
 random.seq.gc <- function(bp, gc){
