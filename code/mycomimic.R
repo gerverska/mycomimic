@@ -163,11 +163,11 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
     mimic.seq <- paste0(upstream_5.8s, mid_5.8s, fits7, downstream_5.8s, its2, upstream_28s, its4.all)
     
     # Prepare FASTA output for the full gene block, as well as separate outputs for each randomly generated component
-    mimic.out <- paste0('>', mimic.name, ';adapter=', adapter, ';frameshift=', frameshift,
-                        ';bp_ITS2=', its2.bp, ';GC_ITS2=', its2.gc, '\n',
-                        mimic.seq)
-    
-    fasta.out <- paste0('mycomimic_', adapter, '.adapter.fasta')
+    # mimic.out <- paste0('>', mimic.name, ';adapter=', adapter, ';frameshift=', frameshift,
+    #                     ';bp_ITS2=', its2.bp, ';GC_ITS2=', its2.gc, '\n',
+    #                     mimic.seq)
+    # 
+    # fasta.out <- paste0('mycomimic_', adapter, '.adapter.fasta')
     
     if(i == 1){
       
@@ -184,9 +184,7 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
                           its4.all.bp = its4.all.bp, its4.all.gc = its4.all.gc, its4.all = its4.all,
                           full = mimic.seq)
       
-      
-      
-      cat(mimic.out, file = here(sequences, fasta.out), sep = '\n')
+      # cat(mimic.out, file = here(sequences, fasta.out), sep = '\n')
       
     } else {
       
@@ -203,18 +201,14 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
                                  its4.all.bp = its4.all.bp, its4.all.gc = its4.all.gc, its4.all = its4.all,
                                  full = mimic.seq)
       mimic <- rbind(mimic, mimic.buffer)
-      cat(mimic.out, file = here(sequences, fasta.out), sep = '\n', append = T)
+      
+      # cat(mimic.out, file = here(sequences, fasta.out), sep = '\n', append = T)
       
     }
     
   }
   
-  # Write a summary csv and output a reference data frame after calculating the total length of each gene block
-  # mimic$length <- mimic$upstream_5.8s.bp + mimic$mid_5.8s.bp + mimic$fits7.bp + mimic$downstream_5.8s.bp +
-  #   mimic$its2.bp +
-  #   mimic$upstream_28s.bp + mimic$its4.all.bp
-  write.csv(mimic, here(logs, 'mycomimic.csv'), row.names = F)
-  
+  # Output a reference data frame with each sequence component
   return(mimic)
   
 }
@@ -326,7 +320,7 @@ initiate.inhibitors <- function(df, primer){
   return(here(inhibitors, inhibitor.out.name))
   
 }
-arrester.advent <- function(df, adapter = F){
+arrester.advent <- function(df){
   
   region <- df[, c('gene', 'downstream_5.8s', 'its2', 'upstream_28s')]
   region$sequences <- paste0(region$downstream_5.8s, region$its2, region$upstream_28s)
@@ -421,7 +415,9 @@ best.blast <- function(df, ids, blocker){
     
     if(length(keep) != 0){
       
-      data.frame(id = keep) %>% separate(id, c('gene', 'position'), '_', F)
+      best.out <- data.frame(id = keep) %>% separate(id, c('gene', 'position'), '_', F)
+      best.oui$hits <- 0
+      best.out
       
     } else {
       
@@ -569,6 +565,11 @@ arrester.hits <- compile.counts('arresters_blastn.out', overlap = F)
 arrester.ids <- readRDS(here(logs, 'arresters.rds'))
 
 best.arresters <- best.blast(arrester.hits, arrester.ids, blocker = 'arrester')
+
+# Best genes
+best.genes <- c(best.inhibitors$gene, best.arresters$gene) %>% unique()
+
+best.mimic <- filter(mimic, gene %in% best.genes)
 
 # Everything below here is junk I'm scared to throw away ####
 
