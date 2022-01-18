@@ -442,7 +442,6 @@ figures <- here('output', 'figures')
 inhibitors <- here('output', 'sequences', 'blockers', 'inhibitors')
 blastdbs <- here('data', 'blastdbs')
 unlink(blastdbs, recursive = T)
-unlink(here('data', '5.8s_its_28s.fasta'))
 
 dir.create(logs, recursive = T)
 dir.create(figures, recursive = T)
