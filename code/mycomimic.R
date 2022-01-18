@@ -499,8 +499,8 @@ db.args_combo <- paste(
 system2('makeblastdb', args = db.args_combo)
 
 # Remove non-compressed files
-system2('rm', args = paste('-f', here('data', '*.fasta')))
-system2('rm', args = paste('-f', here('data', '*.fa')))
+unlink(here('data', '*.fasta'))
+unlink(here('data', '*.fa'))
 
 # Define base blastn parameters ####
 blastn.args <- paste('-perc_identity 50',
