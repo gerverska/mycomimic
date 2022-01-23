@@ -71,34 +71,26 @@ seq.shuffle <- function(string, swap.rate = 0.45, shuffles = 10){
 }
 gene.generator <- function(perm = 100, adapter = 'none', frameshift = 'none'){
   
-  # Define ribosomal subunit DNA sequences, derived from Saccharomyces cerevisiae S288C
-  # Both 5.8S and LSU are trimmed to only contain forward and reverse primers of interest
-  upstream_5.8s <- 'AACTTTCAACAACGGATCTCTTGGTTCTCGCATCGATGAAGAACGCAGC' # 49 bp, GC content = 0.469
-  
-  fits7 <- 'GTGAATCATCGAATCTTTG' # 19 bp, GC content = 0.368
-  
-  its4.all <- 'ACTTAAGCATATCAATAAGCGGAGGA' # 26 bp, GC content = 0.385
-  
   f.adapter.rc <- 'CTGTCTCTTATACACATCTGACGCTGCCGACGA' # 33 bp, GC content = 0.515
   r.adapter.rc <- 'CTGTCTCTTATACACATCTCCGAGCCCACGAGAC' # 34 bp, GC content = 0.529
   
   fs.seq <- rep('N', frameshift) %>% paste(collapse = '')
   
   # Set sequence generation parameters
-  upstream_5.8s.bp <- 49
-  upstream_5.8s.gc <- 0.469
-  mid_5.8s.bp <- 34
+  # upstream_5.8s.bp <- 49 # Fixed
+  # upstream_5.8s.gc <- 0.469
+  mid_5.8s.bp <- 34 # Random
   mid_5.8s.gc <- 0.382
-  fits7.bp <- 19
-  fits7.gc <- 0.368
-  downstream_5.8s.bp <- 55
+  # fits7.bp <- 19 # Fixed
+  # fits7.gc <- 0.368
+  downstream_5.8s.bp <- 55 # Random
   downstream_5.8s.gc <- 0.545
-  its2.bp <- 500
+  its2.bp <- 500 # Random
   its2.gc <- 0.5
-  upstream_28s.bp <- 34
+  upstream_28s.bp <- 34 # Random
   upstream_28s.gc <- 0.5
-  its4.all.bp <- 26
-  its4.all.gc <- 0.385
+  # its4.all.bp <- 26 # Fixed
+  # its4.all.gc <- 0.385
   
   its2.part.bp <- its2.bp / 2
   its2.part.gc <- its2.gc
@@ -145,10 +137,10 @@ gene.generator <- function(perm = 100, adapter = 'none', frameshift = 'none'){
       
     } else {
       
-      adapter.seq <- 'none'
-      fs.seq <- 'none'
-      its2.part.bp <- 'none'
-      its2.part.gc <- 'none'
+      # adapter.seq <- 'none'
+      # fs.seq <- 'none'
+      # its2.part.bp <- 'none'
+      # its2.part.gc <- 'none'
       its2.pt.1 <- 'none'
       its2.pt.2 <- 'none'
       
@@ -174,32 +166,26 @@ gene.generator <- function(perm = 100, adapter = 'none', frameshift = 'none'){
     if(i == 1){
       
       mimic <- data.frame(gene = mimic.name,
-                          upstream_5.8s.bp = upstream_5.8s.bp, upstream_5.8s.gc = upstream_5.8s.gc, upstream_5.8s = upstream_5.8s,
-                          mid_5.8s.bp = mid_5.8s.bp, mid_5.8s.gc = mid_5.8s.gc, mid_5.8s = mid_5.8s,
-                          fits7.bp = fits7.bp, fits7.gc = fits7.gc, fits7 = fits7,
-                          downstream_5.8s.bp = downstream_5.8s.bp, downstream_5.8s.gc = downstream_5.8s.gc, downstream_5.8s = downstream_5.8s,
-                          adapter = adapter, frameshift = fs.seq, adapter.seq = adapter.seq,
-                          its2.pt.1.bp = its2.part.bp, its2.pt.1.gc = its2.part.gc, its2.pt.1 = its2.pt.1,
-                          its2.pt.2.bp = its2.part.bp, its2.pt.2.gc = its2.part.gc, its2.pt.2 = its2.pt.2,
-                          its2.bp = its2.bp, its2.gc = its2.gc, its2 = its2,
-                          upstream_28s.bp = upstream_28s.bp, upstream_28s.gc = upstream_28s.gc, upstream_28s = upstream_28s,
-                          its4.all.bp = its4.all.bp, its4.all.gc = its4.all.gc, its4.all = its4.all)
+                          mid_5.8s = mid_5.8s,
+                          downstream_5.8s = downstream_5.8s,
+                          its2.pt.1 = its2.pt.1,
+                          its2.pt.2 = its2.pt.2,
+                          its2 = its2,
+                          upstream_28s = upstream_28s
+                          )
       
       # cat(mimic.out, file = here(sequences, fasta.out), sep = '\n')
       
     } else {
       
       mimic.buffer <- data.frame(gene = mimic.name,
-                                 upstream_5.8s.bp = upstream_5.8s.bp, upstream_5.8s.gc = upstream_5.8s.gc, upstream_5.8s = upstream_5.8s,
-                                 mid_5.8s.bp = mid_5.8s.bp, mid_5.8s.gc = mid_5.8s.gc, mid_5.8s = mid_5.8s,
-                                 fits7.bp = fits7.bp, fits7.gc = fits7.gc, fits7 = fits7,
-                                 downstream_5.8s.bp = downstream_5.8s.bp, downstream_5.8s.gc = downstream_5.8s.gc, downstream_5.8s = downstream_5.8s,
-                                 adapter = adapter, frameshift = fs.seq, adapter.seq = adapter.seq,
-                                 its2.pt.1.bp = its2.part.bp, its2.pt.1.gc = its2.part.gc, its2.pt.1 = its2.pt.1,
-                                 its2.pt.2.bp = its2.part.bp, its2.pt.2.gc = its2.part.gc, its2.pt.2 = its2.pt.2,
-                                 its2.bp = its2.bp, its2.gc = its2.gc, its2 = its2,
-                                 upstream_28s.bp = upstream_28s.bp, upstream_28s.gc = upstream_28s.gc, upstream_28s = upstream_28s,
-                                 its4.all.bp = its4.all.bp, its4.all.gc = its4.all.gc, its4.all = its4.all)
+                                 mid_5.8s = mid_5.8s,
+                                 downstream_5.8s = downstream_5.8s,
+                                 its2.pt.1 = its2.pt.1,
+                                 its2.pt.2 = its2.pt.2,
+                                 its2 = its2,
+                                 upstream_28s = upstream_28s
+                                 )
       mimic <- rbind(mimic, mimic.buffer)
       
       # cat(mimic.out, file = here(sequences, fasta.out), sep = '\n', append = T)
@@ -320,45 +306,113 @@ initiate.inhibitors <- function(df, primer){
   return(here(inhibitors, inhibitor.out.name))
   
 }
-arrester.advent <- function(df){
+arrester.advent <- function(df, adapter = F){
   
-  region <- df[, c('gene', 'downstream_5.8s', 'its2', 'upstream_28s')]
-  region$sequences <- paste0(region$downstream_5.8s, region$its2, region$upstream_28s)
-  region <- region[, c(1, 5)]
-
-  for(i in 1:nrow(region)){
-
-    gene <- region[i, 1]
-    vect <- strsplit(region[i, 2], '')[[1]]
-    origin <- 1:30
-
-    total.shifts <- length(vect) - 30
-    index.shifts <- 0:total.shifts
-
-    for(j in index.shifts){
-
-      shifted.indices <- origin + j
-      shifted.seq <- vect[shifted.indices] %>% paste(collapse = '')
-
-      arrester.id <- paste0(gene, '_', shifted.indices[[1]])
-      arrester.out <- paste0('>', arrester.id, '\n',
-                              shifted.seq)
-
-      if(i == 1 && j == 0){
-
-        arrester.vect <- arrester.id
-        cat(arrester.out, file = here(arresters, 'arresters.fasta'), sep = '\n')
-
-      } else {
-
+  if(adapter == F){
+    
+    region <- df[, c('gene', 'its2')]
+    
+    for(i in 1:nrow(region)){
+      
+      gene <- region[i, 1]
+      vect <- strsplit(region[i, 2], '')[[1]]
+      origin <- 1:30
+      
+      total.shifts <- length(vect) - 30
+      index.shifts <- 0:total.shifts
+      
+      for(j in index.shifts){
+        
+        shifted.indices <- origin + j
+        shifted.seq <- vect[shifted.indices] %>% paste(collapse = '')
+        
+        arrester.id <- paste(gene, 'ITS2', shifted.indices[[1]], sep = '_')
+        arrester.out <- paste0('>', arrester.id, '\n',
+                               shifted.seq)
+        
+        if(i == 1 && j == 0){
+          
+          arrester.vect <- arrester.id
+          cat(arrester.out, file = here(arresters, 'arresters.fasta'), sep = '\n')
+          
+        } else {
+          
+          arrester.buffer <- arrester.id
+          arrester.vect <- c(arrester.vect, arrester.buffer)
+          cat(arrester.out, file = here(arresters, 'arresters.fasta'), sep = '\n', append = T)
+          
+        }
+        
+      }
+      
+    }
+    
+  } else {
+    
+    region.1 <- df[, c('gene', 'its2.pt.1')]
+    region.2 <- df[, c('gene', 'its2.pt.2')]
+    
+    for(i in 1:nrow(region.1)){
+      
+      gene <- region.1[i, 1]
+      vect <- strsplit(region.1[i, 2], '')[[1]]
+      origin <- 1:30
+      
+      total.shifts <- length(vect) - 30
+      index.shifts <- 0:total.shifts
+      
+      for(j in index.shifts){
+        
+        shifted.indices <- origin + j
+        shifted.seq <- vect[shifted.indices] %>% paste(collapse = '')
+        
+        arrester.id <- paste(gene, 'ITS2.pt.1', shifted.indices[[1]], sep = '_')
+        arrester.out <- paste0('>', arrester.id, '\n',
+                               shifted.seq)
+        
+        if(i == 1 && j == 0){
+          
+          arrester.vect <- arrester.id
+          cat(arrester.out, file = here(arresters, 'arresters.fasta'), sep = '\n')
+          
+        } else {
+          
+          arrester.buffer <- arrester.id
+          arrester.vect <- c(arrester.vect, arrester.buffer)
+          cat(arrester.out, file = here(arresters, 'arresters.fasta'), sep = '\n', append = T)
+          
+        }
+        
+      }
+      
+    }
+    
+    for(k in 1:nrow(region.2)){
+      
+      gene <- region.2[k, 1]
+      vect <- strsplit(region.2[k, 2], '')[[1]]
+      origin <- 1:30
+      
+      total.shifts <- length(vect) - 30
+      index.shifts <- 0:total.shifts
+      
+      for(l in index.shifts){
+        
+        shifted.indices <- origin + l
+        shifted.seq <- vect[shifted.indices] %>% paste(collapse = '')
+        
+        arrester.id <- paste(gene, 'ITS2.pt.2', shifted.indices[[1]], sep = '_')
+        arrester.out <- paste0('>', arrester.id, '\n',
+                               shifted.seq)
+          
         arrester.buffer <- arrester.id
         arrester.vect <- c(arrester.vect, arrester.buffer)
         cat(arrester.out, file = here(arresters, 'arresters.fasta'), sep = '\n', append = T)
-
+        
       }
-
+      
     }
-
+    
   }
   
   saveRDS(arrester.vect, here(logs, 'arresters.rds'))
@@ -375,7 +429,7 @@ compile.counts <- function(filename, overlap = T){
     
   } else {
     
-    hits %>% separate(id, c('gene', 'position'), '_', F)
+    hits %>% separate(id, c('gene', 'sequence', 'position'), '_', F)
     
   }
   
@@ -407,7 +461,9 @@ best.blast <- function(df, ids, blocker){
     max.overlap <- df %>% group_by(primer) %>% summarize(max.overlap = max(overlap))
     max.overlap <- paste(max.overlap$primer, max.overlap$max.overlap, sep = '_')
     
-    filter(df, primer.overlap %in% max.overlap)
+    min.max <- filter(df, primer.overlap %in% max.overlap)
+    # min.max %<>% rownames_to_column(var = 'row')
+    min.max
     
   } else {
     
@@ -415,8 +471,8 @@ best.blast <- function(df, ids, blocker){
     
     if(length(keep) != 0){
       
-      best.out <- data.frame(id = keep) %>% separate(id, c('gene', 'position'), '_', F)
-      best.oui$hits <- 0
+      best.out <- data.frame(id = keep) %>% separate(id, c('gene', 'sequence', 'position'), '_', F)
+      best.out$hits <- 0
       best.out
       
     } else {
@@ -496,7 +552,7 @@ system2('makeblastdb', args = db.args_combo)
 unlink(here('data', '*.fasta'))
 unlink(here('data', '*.fa'))
 
-# Define base blastn parameters ####
+# Define blastn parameters ####
 blastn.args <- paste('-perc_identity 50',
                      '-word_size 12',
                      '-dust no',
@@ -530,6 +586,12 @@ arrester.args <- paste(blastn.args,
 # Adjust adapter and frameshift arguments as needed
 mimic <- gene.generator(adapter = 'reverse', frameshift = 3)
 
+# Define ribosomal subunit DNA sequences, derived from Saccharomyces cerevisiae S288C
+# Both 5.8S and LSU are respectively trimmed upstream and downstream to only contain forward and reverse primers of interest
+mimic$upstream_5.8s <- 'AACTTTCAACAACGGATCTCTTGGTTCTCGCATCGATGAAGAACGCAGC' # 49 bp, GC content = 0.469
+mimic$fits7 <- 'GTGAATCATCGAATCTTTG' # 19 bp, GC content = 0.368
+mimic$its4.all <- 'ACTTAAGCATATCAATAAGCGGAGGA' # 26 bp, GC content = 0.385
+
 # Generate annealing inhibition blocking primers that overlap with priming regions ####
 cat.args_5.8s <- paste(initiate.inhibitors(mimic, 'fits7'), initiate.inhibitors(mimic, 'its3.kyo1'), initiate.inhibitors(mimic, 'its3'),
                            '>',
@@ -540,7 +602,7 @@ system2('cat', args = cat.args_5.8s)
 initiate.inhibitors(mimic, 'its4.fun')
 
 # Generate elongation arrest blocking primers in the randomly generated portions of sequences ####
-arrester.advent(mimic)
+arrester.advent(mimic, adapter = T)
 
 # Compare blockers to UNITE and RDP databases ####
 # 5.8S inhibitors
@@ -571,7 +633,6 @@ best.arresters <- best.blast(arrester.hits, arrester.ids, blocker = 'arrester')
 
 # Best genes
 best.genes <- c(best.inhibitors$gene, best.arresters$gene) %>% unique()
-
 best.mimic <- filter(mimic, gene %in% best.genes)
 
 # Everything below here is junk I'm scared to throw away ####
