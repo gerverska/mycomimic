@@ -6,7 +6,7 @@
 # This approach improves on J. Palmer's "amptk_synthetic_mock.py" by:
 # > increasing the length of the spike-in to facilitate protocol development and downstream library re-balancing
 # > generating sequences with accurate GC%
-# > reducing the potential for sequence shuffling functions to put bases back where they started
+# > better sequence shuffling
 # > adding blocking primer regions (annealing inhibition- and elongation arrest-type) to allow for post-extraction tweaking of spike-in presence
 # > including the option to insert adapter sequences between universal primers to allow for the resizing of synthetic amplicons at the second stage of PCR
 
@@ -16,6 +16,7 @@ library(magrittr)
 library(here)
 
 # Load functions ####
+# Make sure defaults are acceptable
 random.seq.gc <- function(bp, gc){
   
   # Determine the number of bases for each base group
@@ -35,7 +36,7 @@ random.seq.gc <- function(bp, gc){
     replicate(bp.g, 'G'), replicate(bp.c, 'C')) %>% sample() %>% paste(collapse = '')
   
 }
-seq.shuffle <- function(string, swap.rate = 0.5, shuffles = 10){
+seq.shuffle <- function(string, swap.rate = 0.45, shuffles = 10){
   # Maximum swap.rate is 0.5--half of the bases swap with the other half
   # In cases where there is an odd number of bases, a random base is left unswapped.
   
@@ -68,7 +69,7 @@ seq.shuffle <- function(string, swap.rate = 0.5, shuffles = 10){
   vect %>% paste(collapse = '')
   
 }
-gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
+gene.generator <- function(perm = 100, adapter = 'none', frameshift = 'none'){
   
   # Define ribosomal subunit DNA sequences, derived from Saccharomyces cerevisiae S288C
   # Both 5.8S and LSU are trimmed to only contain forward and reverse primers of interest
@@ -77,6 +78,11 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
   fits7 <- 'GTGAATCATCGAATCTTTG' # 19 bp, GC content = 0.368
   
   its4.all <- 'ACTTAAGCATATCAATAAGCGGAGGA' # 26 bp, GC content = 0.385
+  
+  f.adapter.rc <- 'CTGTCTCTTATACACATCTGACGCTGCCGACGA' # 33 bp, GC content = 0.515
+  r.adapter.rc <- 'CTGTCTCTTATACACATCTCCGAGCCCACGAGAC' # 34 bp, GC content = 0.529
+  
+  fs.seq <- rep('N', frameshift) %>% paste(collapse = '')
   
   # Set sequence generation parameters
   upstream_5.8s.bp <- 49
@@ -93,6 +99,9 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
   upstream_28s.gc <- 0.5
   its4.all.bp <- 26
   its4.all.gc <- 0.385
+  
+  its2.part.bp <- its2.bp / 2
+  its2.part.gc <- its2.gc
   
   # Request iterations
   perm <- 1:perm
@@ -115,16 +124,9 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
       # 'forward' adapter is added to the traditionally 'reverse' universal primer (see Taylor et al. 2016, 5.8S-Fun + ITS4-Fun).
       # Choose 'reverse' if your primers have the conventional arrangement (forward adapter with forward primer, etc.).
       # In both cases, the reverse complement sequence is specified to ensure proper integration into the '-' strand.
-      f.adapter.rc <- 'CTGTCTCTTATACACATCTGACGCTGCCGACGA' # 33 bp, GC content = 0.515
-      r.adapter.rc <- 'CTGTCTCTTATACACATCTCCGAGCCCACGAGAC' # 34 bp, GC content = 0.529
-      
-      its2.part.bp <- its2.bp / 2
-      its2.part.gc <- its2.gc
       
       its2.pt.1 <- random.seq.gc(its2.part.bp, its2.part.gc) %>%
         seq.shuffle(shuffles = 10)
-      
-      fs.seq <- rep('N', frameshift) %>% paste(collapse = '')
       
       its2.pt.2 <- random.seq.gc(its2.part.bp, its2.part.gc) %>%
         seq.shuffle(shuffles = 10)
@@ -143,12 +145,12 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
       
     } else {
       
-      adapter.seq <- 'no'
-      fs.seq <- 'no'
-      its2.part.bp <- 'no'
-      its2.part.gc <- 'no'
-      its2.pt.1 <- 'no'
-      its2.pt.2 <- 'no'
+      adapter.seq <- 'none'
+      fs.seq <- 'none'
+      its2.part.bp <- 'none'
+      its2.part.gc <- 'none'
+      its2.pt.1 <- 'none'
+      its2.pt.2 <- 'none'
       
       its2 <- random.seq.gc(its2.bp, its2.gc) %>%
         seq.shuffle(shuffles = 20)
@@ -160,7 +162,7 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
     
     # Combine strings to produce the full, synthetic ITS
     mimic.name <- paste0('MycoMimic.', i)
-    mimic.seq <- paste0(upstream_5.8s, mid_5.8s, fits7, downstream_5.8s, its2, upstream_28s, its4.all)
+    # mimic.seq <- paste0(upstream_5.8s, mid_5.8s, fits7, downstream_5.8s, its2, upstream_28s, its4.all)
     
     # Prepare FASTA output for the full gene block, as well as separate outputs for each randomly generated component
     # mimic.out <- paste0('>', mimic.name, ';adapter=', adapter, ';frameshift=', frameshift,
@@ -181,8 +183,7 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
                           its2.pt.2.bp = its2.part.bp, its2.pt.2.gc = its2.part.gc, its2.pt.2 = its2.pt.2,
                           its2.bp = its2.bp, its2.gc = its2.gc, its2 = its2,
                           upstream_28s.bp = upstream_28s.bp, upstream_28s.gc = upstream_28s.gc, upstream_28s = upstream_28s,
-                          its4.all.bp = its4.all.bp, its4.all.gc = its4.all.gc, its4.all = its4.all,
-                          full = mimic.seq)
+                          its4.all.bp = its4.all.bp, its4.all.gc = its4.all.gc, its4.all = its4.all)
       
       # cat(mimic.out, file = here(sequences, fasta.out), sep = '\n')
       
@@ -198,8 +199,7 @@ gene.generator <- function(perm = 100, adapter = 'no', frameshift = 'no'){
                                  its2.pt.2.bp = its2.part.bp, its2.pt.2.gc = its2.part.gc, its2.pt.2 = its2.pt.2,
                                  its2.bp = its2.bp, its2.gc = its2.gc, its2 = its2,
                                  upstream_28s.bp = upstream_28s.bp, upstream_28s.gc = upstream_28s.gc, upstream_28s = upstream_28s,
-                                 its4.all.bp = its4.all.bp, its4.all.gc = its4.all.gc, its4.all = its4.all,
-                                 full = mimic.seq)
+                                 its4.all.bp = its4.all.bp, its4.all.gc = its4.all.gc, its4.all = its4.all)
       mimic <- rbind(mimic, mimic.buffer)
       
       # cat(mimic.out, file = here(sequences, fasta.out), sep = '\n', append = T)
@@ -505,19 +505,21 @@ blastn.args <- paste('-perc_identity 50',
                      '-num_threads 4',
                      '-outfmt "6 qseqid"')
 
+# For ITS3, ITS3-KYO1, and fITS7 annealing inhibition blocking primers
 inhibitor.args_5.8s <- paste(blastn.args,
                              '-query', here(inhibitors, '5.8s_inhibitors.fasta'),
                              '-db', here(blastdbs, 'unite_5.8s_its'),
                              '-out', here(logs, '5.8s_inhibitors_blastn.out')
                              )
 
-
+# For ITS4-Fun annealing inhibition blocking primers
 inhibitor.args_its4.fun <- paste(blastn.args,
                                  '-query', here(inhibitors, 'its4.fun_inhibitors.fasta'),
                                  '-db', here(blastdbs, 'rdp_28s'),
                                  '-out', here(logs, 'its4.fun_inhibitors_blastn.out')
                                  )
 
+# For elongation arrest blocking primers
 arrester.args <- paste(blastn.args,
                        '-query', here(arresters, 'arresters.fasta'),
                        '-db', here(blastdbs, '5.8s_its_28s'),
@@ -525,6 +527,7 @@ arrester.args <- paste(blastn.args,
 )
 
 # Randomly generate ITS2 sequences with 5.8S and 28S priming regions based on Saccharomyces cerevisiae S288C ####
+# Adjust adapter and frameshift arguments as needed
 mimic <- gene.generator(adapter = 'reverse', frameshift = 3)
 
 # Generate annealing inhibition blocking primers that overlap with priming regions ####
