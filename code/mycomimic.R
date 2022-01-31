@@ -128,16 +128,10 @@ build.blockers <- function(i, df, primer, re){
   
   if(primer == 'its3.kyo1'){
     
-    # region <- df[, c('gene', 'upstream_5.8s', 'mid_5.8s')]
-    # region$sequences <- paste0(region[, 2], region[, 3])
-    
     region <- df[, c('gene', 'mid_5.8s')]
     region$sequences <- paste0(upstream_5.8s, region[, 2])
     
     if(re == T){
-      
-      # region <- df[, c('gene', 'upstream_5.8s_pt.1', 'SbfI', 'upstream_5.8s_pt.2', 'BclI', 'mid_5.8s', 'HindIII')]
-      # region$sequences <- paste0(region[, 2], region[, 3], region[, 4], region[, 5], region[, 6], region[, 7])
       
       region <- df[, c('gene', 'mid_5.8s')]
       region$sequences <- paste0(upstream_5.8s_pt.1, HindIII, upstream_5.8s_pt.2, BclI, region[, 2], NcoI)
@@ -151,16 +145,10 @@ build.blockers <- function(i, df, primer, re){
     
   } else if(primer == 'its3'){
     
-    # region <- df[, c('gene', 'upstream_5.8s', 'mid_5.8s')]
-    # region$sequences <- paste0(region[, 2], region[, 3])
-    
     region <- df[, c('gene', 'mid_5.8s')]
     region$sequences <- paste0(upstream_5.8s, region[, 2])
     
     if(re == T){
-      
-      # region <- df[, c('gene', 'upstream_5.8s_pt.1', 'SbfI', 'upstream_5.8s_pt.2', 'BclI', 'mid_5.8s', 'HindIII')]
-      # region$sequences <- paste0(region[, 2], region[, 3], region[, 4], region[, 5], region[, 6], region[, 7])
       
       region <- df[, c('gene', 'mid_5.8s')]
       region$sequences <- paste0(upstream_5.8s_pt.1, HindIII, upstream_5.8s_pt.2, BclI, region[, 2], NcoI)
@@ -174,16 +162,10 @@ build.blockers <- function(i, df, primer, re){
     
   } else if(primer == 'fits7'){
     
-    # region <- df[, c('gene', 'fits7', 'downstream_5.8s')]
-    # region$sequences <- paste0(region[, 2], region[, 3])
-    
     region <- df[, c('gene', 'downstream_5.8s')]
     region$sequences <- paste0(fits7, region[, 2])
     
     if(re == T){
-      
-      # region <- df[, c('gene', 'fits7', 'NcoI', 'downstream_5.8s')]
-      # region$sequences <- paste0(region[, 2], region[, 3], region[, 4])
       
       region <- df[, c('gene', 'downstream_5.8s')]
       region$sequences <- paste0(fits7, NsiI, region[, 2])
@@ -199,16 +181,10 @@ build.blockers <- function(i, df, primer, re){
   
   else if(primer == 'its4.fun'){
     
-    # region <- df[, c('gene', 'upstream_28s', 'its4.all')]
-    # region$sequences <- paste0(region[, 2], region[, 3])
-    
     region <- df[, c('gene', 'upstream_28s')]
     region$sequences <- paste0(region[, 2], its4.all)
     
     if(re == T){
-      
-      # region <- df[, c('gene', 'upstream_28s', 'NsiI', 'its4.all')]
-      # region$sequences <- paste0(region[, 2], region[, 3], region[, 4])
       
       region <- df[, c('gene', 'upstream_28s')]
       region$sequences <- paste0(NotI, region[, 2], SbfI, its4.all)
@@ -461,7 +437,7 @@ paste0('>MycoMimic_gBlock\n',
        SbfI # CCTGCA/GG
 ) %>% cat(., file = here(seq.out, 'mycomimic_gblock.fasta'))
 
-# Everything below here is junk I'm scared to throw away ####
+# Reference ####
 
 # Define ribosomal subunit DNA sequences, derived from Saccharomyces cerevisiae S288C
 # Both 5.8S and LSU are trimmed to only contain forward and reverse primers of interest
