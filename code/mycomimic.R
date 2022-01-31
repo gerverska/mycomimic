@@ -86,8 +86,8 @@ gene.generator <- function(i, its2.bp, its2.gc, re){
     mid_5.8s.gc <- 0.409
     downstream_5.8s.bp <- 49
     downstream_5.8s.gc <- 0.551
-    upstream_28s.bp <- 20
-    upstream_28s.gc <- 0.45
+    upstream_28s.bp <- 18
+    upstream_28s.gc <- 0.389
     
   }
     
@@ -128,13 +128,19 @@ build.blockers <- function(i, df, primer, re){
   
   if(primer == 'its3.kyo1'){
     
-    region <- df[, c('gene', 'upstream_5.8s', 'mid_5.8s')]
-    region$sequences <- paste0(region[, 2], region[, 3])
+    # region <- df[, c('gene', 'upstream_5.8s', 'mid_5.8s')]
+    # region$sequences <- paste0(region[, 2], region[, 3])
+    
+    region <- df[, c('gene', 'mid_5.8s')]
+    region$sequences <- paste0(upstream_5.8s, region[, 2])
     
     if(re == T){
       
-      region <- df[, c('gene', 'upstream_5.8s', 'BclI', 'mid_5.8s', 'HindIII')]
-      region$sequences <- paste0(region[, 2], region[, 3], region[, 4], region[, 5])
+      # region <- df[, c('gene', 'upstream_5.8s_pt.1', 'SbfI', 'upstream_5.8s_pt.2', 'BclI', 'mid_5.8s', 'HindIII')]
+      # region$sequences <- paste0(region[, 2], region[, 3], region[, 4], region[, 5], region[, 6], region[, 7])
+      
+      region <- df[, c('gene', 'mid_5.8s')]
+      region$sequences <- paste0(upstream_5.8s_pt.1, HindIII, upstream_5.8s_pt.2, BclI, region[, 2], NcoI)
       
     }
     
@@ -145,13 +151,19 @@ build.blockers <- function(i, df, primer, re){
     
   } else if(primer == 'its3'){
     
-    region <- df[, c('gene', 'upstream_5.8s', 'mid_5.8s')]
-    region$sequences <- paste0(region[, 2], region[, 3])
+    # region <- df[, c('gene', 'upstream_5.8s', 'mid_5.8s')]
+    # region$sequences <- paste0(region[, 2], region[, 3])
+    
+    region <- df[, c('gene', 'mid_5.8s')]
+    region$sequences <- paste0(upstream_5.8s, region[, 2])
     
     if(re == T){
       
-      region <- df[, c('gene', 'upstream_5.8s', 'BclI', 'mid_5.8s', 'HindIII')]
-      region$sequences <- paste0(region[, 2], region[, 3], region[, 4], region[, 5])
+      # region <- df[, c('gene', 'upstream_5.8s_pt.1', 'SbfI', 'upstream_5.8s_pt.2', 'BclI', 'mid_5.8s', 'HindIII')]
+      # region$sequences <- paste0(region[, 2], region[, 3], region[, 4], region[, 5], region[, 6], region[, 7])
+      
+      region <- df[, c('gene', 'mid_5.8s')]
+      region$sequences <- paste0(upstream_5.8s_pt.1, HindIII, upstream_5.8s_pt.2, BclI, region[, 2], NcoI)
       
     }
     
@@ -162,13 +174,19 @@ build.blockers <- function(i, df, primer, re){
     
   } else if(primer == 'fits7'){
     
-    region <- df[, c('gene', 'fits7', 'downstream_5.8s')]
-    region$sequences <- paste0(region[, 2], region[, 3])
+    # region <- df[, c('gene', 'fits7', 'downstream_5.8s')]
+    # region$sequences <- paste0(region[, 2], region[, 3])
+    
+    region <- df[, c('gene', 'downstream_5.8s')]
+    region$sequences <- paste0(fits7, region[, 2])
     
     if(re == T){
       
-      region <- df[, c('gene', 'fits7', 'NcoI', 'downstream_5.8s')]
-      region$sequences <- paste0(region[, 2], region[, 3], region[, 4])
+      # region <- df[, c('gene', 'fits7', 'NcoI', 'downstream_5.8s')]
+      # region$sequences <- paste0(region[, 2], region[, 3], region[, 4])
+      
+      region <- df[, c('gene', 'downstream_5.8s')]
+      region$sequences <- paste0(fits7, NsiI, region[, 2])
       
     }
     
@@ -181,13 +199,19 @@ build.blockers <- function(i, df, primer, re){
   
   else if(primer == 'its4.fun'){
     
-    region <- df[, c('gene', 'upstream_28s', 'its4.all')]
-    region$sequences <- paste0(region[, 2], region[, 3])
+    # region <- df[, c('gene', 'upstream_28s', 'its4.all')]
+    # region$sequences <- paste0(region[, 2], region[, 3])
+    
+    region <- df[, c('gene', 'upstream_28s')]
+    region$sequences <- paste0(region[, 2], its4.all)
     
     if(re == T){
       
-      region <- df[, c('gene', 'SbfI', 'upstream_28s', 'NsiI', 'its4.all')]
-      region$sequences <- paste0(region[, 2], region[, 3], region[, 4], region[, 5])
+      # region <- df[, c('gene', 'upstream_28s', 'NsiI', 'its4.all')]
+      # region$sequences <- paste0(region[, 2], region[, 3], region[, 4])
+      
+      region <- df[, c('gene', 'upstream_28s')]
+      region$sequences <- paste0(NotI, region[, 2], SbfI, its4.all)
       
     }
     
@@ -227,7 +251,7 @@ blocker.walker <- function(j, start, vect, rc, max.overlap, gene, primer){
     
     shifted.indices <- start - j
     shifted.seq <- vect[shifted.indices] %>% rev() %>% paste(collapse = '')
-    shifted.seq <- chartr('ATGC','TACG', shifted.seq)
+    shifted.seq <- chartr('ATGCRYMKHDBV','TACGYRKMDHVB', shifted.seq)
     
     shifted.indices <- shifted.indices %>% rev()
     
@@ -280,7 +304,6 @@ best.blast <- function(df, ids){
   min.max
   
 }
-fastafy <- function()
 
 # Clear, create, and set output directories ####
 unlink('output', recursive = T)
@@ -353,27 +376,19 @@ mimic <- lapply(1:500, gene.generator, its2.bp = 250, its2.gc = 0.5, re = T) %>%
 
 # Define ribosomal subunit DNA sequences, derived from Saccharomyces cerevisiae S288C
 # Both 5.8S and LSU are respectively trimmed upstream and downstream to only contain forward and reverse primers of interest
-upstream_5.8s <- 'AACTTTCAACAACGGATCTCTTGGTTCTCGCATCGATGAAGAACGCAGC' # 49 bp, GC content = 0.469
-fits7 <- 'GTGAATCATCGAATCTTTG' # 19 bp, GC content = 0.368
-# fits7 <- 'GTGARTCATCGAATCTTTG'
-its4.all <- 'ACTTAAGCATATCAATAAGCGGAGGA' # 26 bp, GC content = 0.385
-
-mimic$upstream_5.8s <- upstream_5.8s
-mimic$fits7 <- fits7
-mimic$its4.all <- its4.all
+upstream_5.8s <- 'AACTTTYRRCAAYGGATCWCTTGGTTCTCGCAHCGATGAAGAACRYAGC'
+upstream_5.8s_pt.1 <- 'AACTTTYRRCAAYGGATCWCT'
+upstream_5.8s_pt.2 <- 'TCGCAHCGATGAAGAACRYAGC'
+fits7 <- 'GTGARTCATCGAATCTTTG'
+its4.all <- 'AYTTAAGCATATCAATAAGCGSAGGA'
 
 # Restriction enzyme recognition sites
-BclI <- 'TGATCA'
-HindIII <- 'AAGCTT'
-NcoI <- 'CCATGG'
-NsiI <- 'ATGCAT'
-SbfI <- 'CCTGCAGG'
-
-mimic$BclI <- BclI
-mimic$HindIII <- HindIII
-mimic$NcoI <- NcoI
-mimic$NsiI <- NsiI
-mimic$SbfI <- SbfI
+BclI <- 'TGATCA' # T/GATCA
+HindIII <- 'AAGCTT' # A/AGCTT
+NcoI <- 'CCATGG' # C/CATGG
+NsiI <- 'ATGCAT' # ATGCA/T
+SbfI <- 'CCTGCAGG' # CCTGCA/GG
+NotI <- 'GCGGCCGC' # GC/GGCCGC
 
 # Generate annealing inhibition blocking primers that overlap with priming regions ####
 # 5.8S
@@ -407,37 +422,44 @@ m13f <- 'GTAAAACGACGGCCAGT'
 m13r <- strsplit('CAGGAAACAGCTATGAC', '')[[1]] %>% rev() %>% paste(collapse = '') %>%
   chartr('ATGC','TACG', .)
 
-paste0('>MycoMimic_fwd.duplex\n',
-                     m13f,
-                     upstream_5.8s,
-                     BclI
-                     ) %>% cat(., file = here(seq.out, 'mycomimic_fwd.duplex.fasta'))
+# Duplexes
+paste0('>MycoMimic_fwd.duplex_pt.1\n',
+       m13f,
+       upstream_5.8s_pt.1,
+       HindIII # A/AGCTT
+) %>% cat(., file = here(seq.out, 'mycomimic_fwd.duplex_pt.1.fasta'))
 
+paste0('>MycoMimic_fwd.duplex_pt.2\n',
+       HindIII, # A/AGCTT
+       upstream_5.8s_pt.2,
+       BclI # T/GATCA
+) %>% cat(., file = here(seq.out, 'mycomimic_fwd.duplex_pt.2.fasta'))
 
 paste0('>MycoMimic_mid.duplex\n',
-                     HindIII,
-                     fits7,
-                     NcoI
-                     ) %>% cat(., file = here(seq.out, 'mycomimic_mid.duplex.fasta'))
+       NcoI, # C/CATGG
+       fits7,
+       NsiI # ATGCA/T
+) %>% cat(., file = here(seq.out, 'mycomimic_mid.duplex.fasta'))
 
 paste0('>MycoMimic_rev.duplex\n',
-                     NsiI,
-                     its4.all,
-                     m13r
-                     ) %>% cat(., file = here(seq.out, 'mycomimic_rev.duplex.fasta'))
+       SbfI, # CCTGCA/GG
+       its4.all,
+       m13r
+) %>% cat(., file = here(seq.out, 'mycomimic_rev.duplex.fasta'))
 
+# gBlock
 paste0('>MycoMimic_gBlock\n',
-                 BclI,
-                 best[best$primer == 'its3', ]$mid_5.8s,
-                 HindIII,
-                 fits7,
-                 NcoI,
-                 best[best$primer == 'fits7', ]$downstream_5.8s,
-                 best[best$primer == sample(best$primer, 1), ]$its2,
-                 SbfI,
-                 best[best$primer == 'its4.fun', ]$upstream_28s,
-                 NsiI
-                 ) %>% cat(., file = here(seq.out, 'mycomimic_gblock.fasta'))
+       BclI, # T/GATCA
+       best[best$primer == 'its3', ]$mid_5.8s,
+       NcoI, # C/CATGG
+       'GTGAATCATCGAATCTTTG', # Replace degenerate fITS7 with S288C fITS7
+       NsiI, # ATGCA/T
+       best[best$primer == 'fits7', ]$downstream_5.8s,
+       best[best$primer == sample(best$primer, 1), ]$its2,
+       NotI, # GC/GGCCGC
+       best[best$primer == 'its4.fun', ]$upstream_28s,
+       SbfI # CCTGCA/GG
+) %>% cat(., file = here(seq.out, 'mycomimic_gblock.fasta'))
 
 # Everything below here is junk I'm scared to throw away ####
 
@@ -462,3 +484,28 @@ paste0('>MycoMimic_gBlock\n',
 # its4.fun <- 'AYTTAAGCATATCAATAAGCGGAGG'
 # its4ngs <- 'GCATATCAATAAGCGGAGGA'
 # its4ngs <- 'GCATATCAATAAGCGSAGGA'
+
+# upstream_5.8s <- 'AACTTTCAACAACGGATCTCTTGGTTCTCGCATCGATGAAGAACGCAGC' # 49 bp, GC content = 0.469
+# upstream_5.8s <- 'AACTTTYRRCAAYGGATCWCTTGGTTCTCGCAHCGATGAAGAACRYAGC' # 49 bp, GC content = 0.469
+# fits7 <- 'GTGAATCATCGAATCTTTG' # 19 bp, GC content = 0.368
+# fits7 <- 'GTGARTCATCGAATCTTTG'
+# its4.all <- 'ACTTAAGCATATCAATAAGCGGAGGA' # 26 bp, GC content = 0.385
+# its4.all <- 'AYTTAAGCATATCAATAAGCGSAGGA' # 26 bp, GC content = 0.385
+
+# five.8s.fun <- 'AACTTTCAACAACGGATCTCT'
+# five.8s.fun <- 'AACTTTYRRCAAYGGATCWCT'
+# its3.all <- 'GCATCGATGAAGAACGCAGC'
+# its3 <- 'GCATCGATGAAGAACGCAGC'
+# its3.kyo1 <- 'ATCGATGAAGAACGCAG'
+# its3.kyo1 <- 'AHCGATGAAGAACRYAG'
+# its4 <- 'GCATATCAATAAGCGGAGGA'
+# its4.fun <- 'ACTTAAGCATATCAATAAGCGGAGG'
+# its4.fun <- 'AYTTAAGCATATCAATAAGCGGAGG'
+# its4ngs <- 'GCATATCAATAAGCGGAGGA'
+# its4ngs <- 'GCATATCAATAAGCGSAGGA'
+
+# BclI <- 'TGATCA'
+# HindIII <- 'AAGCTT'
+# NcoI <- 'CCATGG'
+# NsiI <- 'ATGCAT'
+# SbfI <- 'CCTGCAGG'
