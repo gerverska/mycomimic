@@ -12,6 +12,6 @@ can then be visualized separately for each sample after a restriction enzyme dig
 
 While the MycoMimic method still requires read sacrifice, these reads can be used to identify and correct for the bias
 among degenerate primers occurring in each sample. By ligating oligonucleotide duplexes to the main ITS2-containing gene
-fragment, the priming regions of each spike-in can have degenerate bases. Researchers can then bioinformatically tally up
+fragment, the priming regions of each spike-in are made to have degenerate bases. Researchers can then bioinformatically tally up
 the sequence counts of each primer variant in each sample to correct for the over- or under-abundance of each variant,
 potentially using these tallies to inform a correction model for every sample in the sequencing effort.
