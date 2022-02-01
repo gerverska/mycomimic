@@ -1,5 +1,5 @@
-## mycomimic
-# Randomly generate synthetic ITS2 sequences for safe and easy use in fungal metabarcoding projects
+# mycomimic
+## Randomly generate synthetic ITS2 sequences for safe and easy use in fungal metabarcoding projects
 
 While synthetic DNA spike-ins derived from gene fragments can help researchers obtain more quantitative data from their metabarcoding efforts,
 doing requires cumbersome optimzation of the amount of input spike-in to add to each sample and still requires sacrificing
